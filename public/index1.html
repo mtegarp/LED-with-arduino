@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Data from Arduino</title>
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.4/raphael-min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/justgage/1.3.0/justgage.min.js"></script>
+<style>
+    .fixed-card {
+        height: 300px; /* Anda bisa menyesuaikan nilai ini sesuai kebutuhan */
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Ini akan memposisikan konten di tengah secara vertikal */
+    }
+</style>
+
+</head>
+<body style="font-family: 'Poppins', sans-serif;">
+<div class="container mt-4">
+<h1 class="text-center" style="color: #007BFF; border-bottom: 2px solid #007BFF; padding-bottom: 10px; margin-bottom: 0px;"><img alt="Logo" src="logo.png" style=" width: 100px; height: 100px; margin-right: 10px; vertical-align: middle; margin-bottom: -10px;"/>PT. Maju Bangun Sinergi</h1>
+<section class="services-section">
+    <div class="container" id="data-monitoring">
+        <h2 class="text-center mt-4 mb-4">Data Monitoring</h2>
+        <div class="row">
+            <!-- Temperature Card -->
+            <div class="col-md-4">
+                <div class="d-flex justify-content-center"><div class="card mb-4 shadow fixed-card">
+
+                    <div class="card-body">
+                        <h5 class="card-title">Temperature</h5>
+                        <div id="temp_meter1"></div>
+                        <p class="card-text"><span id="temp_text1">Loading...</span></p>
+                    </div></div></div>
+            </div>
+            
+            <!-- Humidity Card -->
+            <div class="col-md-4">
+                <div class="d-flex justify-content-center"><div class="card mb-4 shadow fixed-card">
+
+                    <div class="card-body">
+                        <h5 class="card-title">Humidity</h5>
+                        <div id="humidity_meter1"></div>
+                        <p class="card-text"><span id="humidity_text1">Loading...</span></p>
+                    </div></div></div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="d-flex justify-content-center"><div class="card mb-4 shadow fixed-card">
+
+                    <div class="card-body">
+                        <h5 class="card-title">Temperature</h5>
+                        <div id="temp_meter2"></div>
+                        <p class="card-text"><span id="temp_text2">Loading...</span></p>
+                    </div></div></div>
+            </div>
+            
+            <!-- Humidity Card -->
+            <div class="col-md-4">
+                <div class="d-flex justify-content-center"><div class="card mb-4 shadow fixed-card">
+
+                    <div class="card-body">
+                        <h5 class="card-title">Humidity</h5>
+                        <div id="humidity_meter2"></div>
+                        <p class="card-text"><span id="humidity_text2">Loading...</span></p>
+                    </div></div></div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="d-flex justify-content-center"><div class="card mb-4 shadow fixed-card">
+
+                    <div class="card-body">
+                        <h5 class="card-title">Temperature</h5>
+                        <div id="temp_meter3"></div>
+                        <p class="card-text"><span id="temp_text3">Loading...</span></p>
+                    </div></div></div>
+            </div>
+            
+            <!-- Humidity Card -->
+            <div class="col-md-4">
+                <div class="d-flex justify-content-center"><div class="card mb-4 shadow fixed-card">
+
+                    <div class="card-body">
+                        <h5 class="card-title">Humidity</h5>
+                        <div id="humidity_meter3"></div>
+                        <p class="card-text"><span id="humidity_text3">Loading...</span></p>
+                    </div></div></div>
+            </div>
+            
+            <!-- PPM Card -->
+            <div class="col-md-4">
+                <div class="d-flex justify-content-center"><div class="card mb-4 shadow fixed-card">
+
+                    <div class="card-body">
+                        <h5 class="card-title">PPM</h5>
+                        <div id="ppm_meter"></div>
+                        <p class="card-text"><span id="ppm_text">Loading...</span></p>
+                    </div></div></div>
+            </div>
+
+            <!-- Velocity m/s Card -->
+            <div class="col-md-4">
+                <div class="d-flex justify-content-center"><div class="card mb-4 shadow fixed-card">
+
+                    <div class="card-body">
+                        <h5 class="card-title">Velocity (m/s)</h5>
+                        <div id="velocity_ms_meter"></div>
+                        <p class="card-text"><span id="velocity_ms_text">Loading...</span></p>
+                    </div></div></div>
+            </div>
+
+            <!-- Velocity km/h Card -->
+            <div class="col-md-4">
+                <div class="d-flex justify-content-center"><div class="card mb-4 shadow fixed-card">
+
+                    <div class="card-body">
+                        <h5 class="card-title">Velocity (km/h)</h5>
+                        <div id="velocity_kmh_meter"></div>
+                        <p class="card-text"><span id="velocity_kmh_text">Loading...</span></p>
+                    </div></div></div>
+            </div>
+
+            <!-- LED Controller Card -->
+            <div class="col-md-4">
+                <div class="d-flex justify-content-center"><div class="card mb-4 shadow fixed-card">
+
+                    <div class="card-body">
+                        <h5 class="card-title">LED Controller</h5>
+                        <p class="card-text">
+                            <button class="btn btn-primary mb-2" style="width: 140px; height: 80px; font-size: 10px;" onclick="switchLED('1')">Switch ON Red LED</button>
+                            <button class="btn btn-primary mb-2" style="width: 140px; height: 80px; font-size: 10px;" onclick="switchLED('2')">Switch OFF Red LED</button>
+                            <button class="btn btn-primary mb-2" style="width: 140px; height: 80px; font-size: 10px;" onclick="switchLED('3')">Switch ON Green LED</button>
+                            <button class="btn btn-primary mb-2" style="width: 140px; height: 80px; font-size: 10px;" onclick="switchLED('4')">Switch OFF Green LED</button>
+                        </p>
+                    </div></div></div>
+            </div>
+
+            <!-- Threshold Value Card -->
+            <!-- Threshold Value Card -->
+            <div class="col-md-6 mx-auto mt-4 mb-4">
+                <div class="d-flex justify-content-center">
+                    <div class="card mb-4 shadow fixed-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Threshold Value</h5>
+                            <p class="card-text">
+                                <form id="threshold-form">
+                                    <div class="form-group">
+                                        <label for="threshold">Enter Threshold Value:</label>
+                                        <input class="form-control" id="threshold" placeholder="Enter Threshold" type="text"/>
+                                    </div>
+                                    <button class="btn btn-primary mb-2" style="width: 220px; height: 40px; font-size: 10px;" type="submit">Submit Threshold</button>
+                                </form>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+</div>
+<script>
+        document.getElementById('threshold-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var thresholdValue = document.getElementById('threshold').value;
+            fetch('/set-threshold', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ threshold: thresholdValue }),
+            })
+            .then(response => response.json())
+            .then(data => alert(data.message))
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+<script>
+        function switchLED(color) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/switch-' + color, true);
+            xhr.send();
+        }
+    </script>
+<script>
+        // Function to convert degrees to radians
+        function toRad(angle) {
+            return angle * Math.PI / 180;
+        }
+
+        // Create JustGage instances for each meter
+        const tempGage1 = new JustGage({ id: 'temp_meter1', value: 0, min: 0, max: 100, title: 'Temperature1', donut: true, gaugeWidthScale: 0.5 });
+        const humidityGage1 = new JustGage({ id: 'humidity_meter1', value: 0, min: 0, max: 100, title: 'Humidity1', donut: true, gaugeWidthScale: 0.5 });
+        const tempGage2 = new JustGage({ id: 'temp_meter2', value: 0, min: 0, max: 100, title: 'Temperature2', donut: true, gaugeWidthScale: 0.5 });
+        const humidityGage2 = new JustGage({ id: 'humidity_meter2', value: 0, min: 0, max: 100, title: 'Humidity2', donut: true, gaugeWidthScale: 0.5 });
+        const tempGage3 = new JustGage({ id: 'temp_meter3', value: 0, min: 0, max: 100, title: 'Temperature3', donut: true, gaugeWidthScale: 0.5 });
+        const humidityGage3 = new JustGage({ id: 'humidity_meter3', value: 0, min: 0, max: 100, title: 'Humidity3', donut: true, gaugeWidthScale: 0.5 });
+        const ppmGage = new JustGage({ id: 'ppm_meter', value: 0, min: 0, max: 500, title: 'PPM', donut: true, gaugeWidthScale: 0.5 }); // Max 500
+        const velocityMsGage = new JustGage({ id: 'velocity_ms_meter', value: 0, min: 0, max: 100, title: 'Velocity (m/s)', donut: true, gaugeWidthScale: 0.5 });
+        const velocityKmhGage = new JustGage({ id: 'velocity_kmh_meter', value: 0, min: 0, max: 100, title: 'Velocity (km/h)', donut: true, gaugeWidthScale: 0.5 });
+
+        // Membuat koneksi dengan socket.io
+        const socket = io();
+
+        // Mendengarkan event 'data' dari server
+        socket.on('data', (data) => {
+            tempGage1.refresh(data.Temp1);
+            humidityGage1.refresh(data.Humidity1);
+            tempGage2.refresh(data.Temp2);
+            humidityGage2.refresh(data.Humidity2);
+            tempGage3.refresh(data.Temp3);
+            humidityGage3.refresh(data.Humidity3);
+            ppmGage.refresh(data.PPM); // No normalization needed, max is 500
+
+            velocityMsGage.refresh(data.velocity_ms);
+            velocityKmhGage.refresh(data.velocity_kmh);
+
+            document.getElementById('temp_text1').innerText = `Temperature1: ${data.Temp1}°C`;
+            document.getElementById('humidity_text1').innerText = `Humidity1: ${data.Humidity1}%`;
+            document.getElementById('temp_text2').innerText = `Temperature2: ${data.Temp2}°C`;
+            document.getElementById('humidity_text2').innerText = `Humidity2: ${data.Humidity2}%`;
+            document.getElementById('temp_text3').innerText = `Temperature3: ${data.Temp3}°C`;
+            document.getElementById('humidity_text3').innerText = `Humidity3: ${data.Humidity3}%`;
+            document.getElementById('ppm_text').innerText = `PPM: ${data.PPM}`;
+            document.getElementById('velocity_ms_text').innerText = `Velocity (m/s): ${data.velocity_ms}`;
+            document.getElementById('velocity_kmh_text').innerText = `Velocity (km/h): ${data.velocity_kmh}`;
+
+
+        });
+    </script>
+<div style="margin-top: 50px; padding: 20px 0; background-color: #f8f9fa; text-align: center;">
+<footer>
+        © 2023 All Rights Reserved.
+    </footer>
+</div>
+</body>
+</html>
